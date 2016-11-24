@@ -50,6 +50,7 @@ public class MyDB {
                     TABLE_NAME_3 + "  ( " +
                     KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     START_TIME + " INTEGER NOT NULL, " +
+                    ACTIVITY_TYPE + " INTEGER NOT NULL, " +
                     LOCATION + " INTEGER NOT NULL)";
 
     //資料庫物件
@@ -66,7 +67,7 @@ public class MyDB {
         db.close();
     }
 
-    //新增參數指定的物件
+    //記步資料Insert
     public Item insert(Item item) {
         //建立準備新增資料的ContentValues物件
         ContentValues cv = new ContentValues();
@@ -83,6 +84,24 @@ public class MyDB {
 
         item.setId(id);
         return item;
+    }
+
+    //跌倒資料Insert
+    public void insert2(long time, String type,int location) {
+        //建立準備新增資料的ContentValues物件
+        ContentValues cv = new ContentValues();
+
+        //加入ContentValues物件包裝的新增資料
+        //第一個參數是欄位名稱，第二個參數是欄位的資料
+        cv.put(START_TIME, time);
+        cv.put(ACTIVITY_TYPE, type);
+        cv.put(LOCATION, location);
+
+        //新增一筆資料並取得編號
+        long id = db.insert(TABLE_NAME_3, null, cv);
+
+        //item.setId(id);
+
     }
 
     //修改參數指定的物件

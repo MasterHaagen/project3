@@ -1,5 +1,6 @@
 package com.nttu.csie.project3;
 
+import java.util.Calendar;
 import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class mix extends Activity {
+    MyDB db;
     //�^��-----------------------------------------------------------------------
     float Fmax;
     float Force;
@@ -137,9 +139,10 @@ public class mix extends Activity {
                             if(gcom!="NO") fall=true;
                             textView2.setText("Fmax: " + Fmax+"\n"+"\n"+gcom+"\n"+"\n"+degree+"\n"+"\n");
                             /**
-                             *
-                             *Here display alert and get fall information
-                             *
+                             **/
+                            Calendar c = Calendar.getInstance();
+                            db.insert2(c.getTimeInMillis(),gcom,0);
+                             /**
                              **/
                             move=false;
                             Fmax=0;
@@ -337,6 +340,7 @@ public class mix extends Activity {
 
         isStarted = false;
 
+        db = new MyDB(getApplicationContext());
         //�p�ɾ�
         //  mHandlerTime.postDelayed(timerRun,1000);
         //  mHandlerTime.removeCallbacks(timerRun);
