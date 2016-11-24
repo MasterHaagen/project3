@@ -18,6 +18,7 @@ public class MyDB {
     //表格名稱
     public static final String TABLE_NAME = "history";
     public static final String TABLE_NAME_2 = "location";
+    public static final String TABLE_NAME_3 = "fall";
     // 編號表格欄位名稱，固定不變
     public static final String KEY_ID = "_id";
     // 其它表格欄位名稱
@@ -42,6 +43,13 @@ public class MyDB {
                     KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     START_TIME + " INTEGER NOT NULL, " +
                     END_TIME + " INTEGER NOT NULL, " +
+                    LOCATION + " INTEGER NOT NULL)";
+
+    public static final String CREATE_TABLE_3 =
+            "CREATE TABLE " +
+                    TABLE_NAME_3 + "  ( " +
+                    KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    START_TIME + " INTEGER NOT NULL, " +
                     LOCATION + " INTEGER NOT NULL)";
 
     //資料庫物件
