@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4557be</color>
+    <color name="colorPrimaryDark">#303f9f</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="chart_color_US">#576F86</color>
+    <color name="chart_color_JP">#e54436</color>
+    <color name="chart_color_KR">#f9c42e</color>
+    <color name="chart_color_Others">#BAE6FB</color>
+</resources>
