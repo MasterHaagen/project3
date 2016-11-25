@@ -141,7 +141,7 @@ public class MyDB {
 //
 //    }
 
-        // 取得指定編號的資料物件
+        // 歷史資料圖表GET
     public Cursor get(long startTime) {
         long endTime = startTime + 2 * 3600 * 1000 - 1;
         // 準備回傳結果用的物件

@@ -3,7 +3,6 @@ package com.nttu.csie.project3;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.database.Cursor;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,8 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-
-public class BarChartActivity extends AppCompatActivity {
+public class BarChart2Activity extends AppCompatActivity {
 
     //日期
     Button dateButton;
@@ -40,7 +38,7 @@ public class BarChartActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        super.setContentView(R.layout.activity_bar_chart);
+        super.setContentView(R.layout.activity_bar_chart2);
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         processViews();
@@ -71,8 +69,8 @@ public class BarChartActivity extends AppCompatActivity {
 
 
     protected void processViews(){
-        chart = (BarChart)findViewById(R.id.barChart);
-        dateButton = (Button)findViewById(R.id.dateButton);
+        chart = (BarChart)findViewById(R.id.barChart2);
+        dateButton = (Button)findViewById(R.id.dateButton2);
         db = new MyDB(getApplicationContext());
 
     }
@@ -128,7 +126,7 @@ public class BarChartActivity extends AppCompatActivity {
         List<BarEntry> yVals = new ArrayList<>();
         for(int i=0;i<DATA_COUNT;i++) {
             c = db.get(time + (i*2) * 3600 * 1000);
-            yVals.add(new BarEntry(c.getLong(0), i));
+            yVals.add(new BarEntry(c.getLong(0)*40, i));
 
         }
         return yVals;
@@ -136,7 +134,7 @@ public class BarChartActivity extends AppCompatActivity {
 
 
     private BarData getBarData(){
-        BarDataSet dataSetA = new BarDataSet(getChartData(), "Steps");
+        BarDataSet dataSetA = new BarDataSet(getChartData(), "cal");
 
         List<IBarDataSet> dataSets = new ArrayList<>();
         // add the datasets
@@ -150,8 +148,7 @@ public class BarChartActivity extends AppCompatActivity {
 
     private int[] getChartColors() {
         int[] colors = new int[]{
-                getResourceColor(R.color.colorPrimary)
-        };
+                getResourceColor(R.color.chart_color_KR) };
         return colors;
     }
 

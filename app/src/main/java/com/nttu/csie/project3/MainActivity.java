@@ -102,7 +102,9 @@ public class MainActivity extends AppCompatActivity
 
     //Onclick調用
     public void onClick_Btn1(View view) {
-
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this,BarChart2Activity.class);
+        startActivity(intent);
     }
 
     public void onClick_Btn2(View view) {

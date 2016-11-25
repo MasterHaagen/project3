@@ -19,6 +19,7 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -67,8 +68,13 @@
             android:name=".test3"
             android:label="test3"
             android:parentActivityName=".MainActivity" />
-        <!--混合測試-->
-        <activity android:name=".mix"/>
+        <!-- 混合測試 -->
+        <activity android:name=".mix" />
+
+        <!--卡路里-->
+        <activity
+            android:name=".BarChart2Activity"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>
