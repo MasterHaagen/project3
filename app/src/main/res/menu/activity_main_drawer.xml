@@ -23,14 +23,14 @@
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/action_settings" />
-        <item
-            android:id="@+id/icon_fall"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="fall" />
-        <item
-            android:id="@+id/icon_step"
-            android:icon="@drawable/ic_menu_send"
-            android:title="step" />
+        <!--<item-->
+            <!--android:id="@+id/icon_fall"-->
+            <!--android:icon="@drawable/ic_menu_camera"-->
+            <!--android:title="fall" />-->
+        <!--<item-->
+            <!--android:id="@+id/icon_step"-->
+            <!--android:icon="@drawable/ic_menu_send"-->
+            <!--android:title="step" />-->
 
     </group>
 

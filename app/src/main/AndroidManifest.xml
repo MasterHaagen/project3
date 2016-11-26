@@ -66,8 +66,7 @@
         <!-- 測試JAVA -->
         <activity
             android:name=".test3"
-            android:label="test3"
-            android:parentActivityName=".MainActivity" />
+            android:label="test3" />
         <!-- 混合測試 -->
         <activity android:name=".mix" />
 

@@ -40,10 +40,13 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.github.manuelpeinado.fadingactionbar:fadingactionbar:3.1.2'
 
+    //SmartTabLayout
     compile 'com.ogaclejapan.smarttablayout:library:1.6.1@aar'
     //Optional: see how to use the utility.
     compile 'com.ogaclejapan.smarttablayout:utils-v4:1.6.1@aar'
     //Optional: see how to use the utility.
     compile 'com.ogaclejapan.smarttablayout:utils-v13:1.6.1@aar'
 
+    //FaingActionBar
+    compile 'com.github.manuelpeinado.fadingactionbar:fadingactionbar:3.1.2'
 }

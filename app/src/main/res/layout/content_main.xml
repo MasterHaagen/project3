@@ -28,24 +28,24 @@
             android:layout_height="match_parent">
 
             <Button
-                android:text="卡路里"
-                android:layout_width="wrap_content"
-                android:drawableTop="@drawable/ic_btn1"
-                android:onClick="onClick_Btn1"
-                android:id="@+id/btn1"
-                android:backgroundTint="@color/chart_color_KR"
-                android:textSize="16dp"
-                android:layout_height="100dp" />
-
-            <Button
                 android:text="步數"
                 android:layout_width="wrap_content"
                 android:drawableTop="@drawable/ic_btn2"
-                android:onClick="onClick_Btn2"
+                android:onClick="onClick_Btn1"
                 android:layout_height="100dp"
-                android:id="@+id/btn2"
+                android:id="@+id/btn1"
                 android:textSize="16dp"
                 android:backgroundTint="@color/colorPrimary" />
+
+            <Button
+                android:text="卡路里"
+                android:layout_width="wrap_content"
+                android:drawableTop="@drawable/ic_btn1"
+                android:onClick="onClick_Btn2"
+                android:id="@+id/btn2"
+                android:backgroundTint="@color/chart_color_KR"
+                android:textSize="16dp"
+                android:layout_height="100dp" />
 
             <Button
                 android:text="位置"
@@ -79,7 +79,8 @@
                 android:textSize="16dp"
                 android:id="@+id/btn5"
                 android:onClick="onClick_Btn5"
-                android:backgroundTint="@android:color/holo_blue_bright" />
+                android:backgroundTint="@android:color/holo_blue_bright"
+                android:visibility="invisible"/>
 
             <Button
                 android:text="開發中"
