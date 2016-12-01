@@ -7,6 +7,11 @@
          Google Maps Android API v2, but you must specify either coarse or fine
          location permissions for the 'MyLocation' functionality.
     -->
+
+    <!-- 打電話 -->
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <!-- 傳簡訊 -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
     <!-- 通过WiFi或移动基站的方式获取用户错略的经纬度信息，定位精度大概误差在30~1500米 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <!-- 通过GPS芯片接收卫星的定位信息，定位精度达10米以内 -->

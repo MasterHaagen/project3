@@ -117,7 +117,7 @@
 
     <ImageView
         android:layout_width="match_parent"
-        app:srcCompat="@drawable/light"
+        app:srcCompat="@drawable/dark"
         android:id="@+id/imageView"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"

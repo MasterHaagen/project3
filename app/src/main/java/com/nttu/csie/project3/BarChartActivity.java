@@ -121,8 +121,8 @@ public class BarChartActivity extends AppCompatActivity {
     //Y軸數據
     private List<BarEntry> getChartData(){
 
-        int start = 1;
-        Cursor c = null;
+        //int start = 1;
+        Cursor c;
         long time=calendar.getTimeInMillis();
 
         List<BarEntry> yVals = new ArrayList<>();
