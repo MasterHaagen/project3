@@ -141,7 +141,7 @@ public class mix extends Activity {
                             /**
                              **/
                             Calendar c = Calendar.getInstance();
-                            db.insert2(c.getTimeInMillis(),gcom,0);
+                            db.insert2(c.getTimeInMillis(),gcom,"");
                              /**
                              **/
                             move=false;

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">行動照護</string>
+    <string name="app_name">跌倒偵測與記步APP</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -20,4 +20,8 @@
     <string name="message_current_location">是否儲存目前位置?</string>
 
     <string name="google_play_service_missing">裝置沒有安裝Google Play服務</string>
+
+    <string-array name="region_icon_list">
+        <item >@drawable/map</item>
+    </string-array>
 </resources>

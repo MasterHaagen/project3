@@ -199,7 +199,7 @@ public class FallTest extends Activity {
         //鎖定螢幕方向
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        textView1 =(TextView)findViewById(R.id.textView1);
+        //textView1 =(TextView)findViewById(R.id.textView1);
         Button start = (Button)findViewById(R.id.button);
         start.setOnClickListener(start_l);
         //	Button stop = (Button)findViewById(R.id.stop);

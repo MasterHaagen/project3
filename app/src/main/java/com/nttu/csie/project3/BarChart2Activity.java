@@ -126,7 +126,7 @@ public class BarChart2Activity extends AppCompatActivity {
         List<BarEntry> yVals = new ArrayList<>();
         for(int i=0;i<DATA_COUNT;i++) {
             c = db.get(time + (i*2) * 3600 * 1000);
-            yVals.add(new BarEntry(c.getLong(0)*40, i));
+            yVals.add(new BarEntry((c.getLong(0)*40)/1000, i));
 
         }
         return yVals;
@@ -134,7 +134,7 @@ public class BarChart2Activity extends AppCompatActivity {
 
 
     private BarData getBarData(){
-        BarDataSet dataSetA = new BarDataSet(getChartData(), "cal");
+        BarDataSet dataSetA = new BarDataSet(getChartData(), "kcal");
 
         List<IBarDataSet> dataSets = new ArrayList<>();
         // add the datasets

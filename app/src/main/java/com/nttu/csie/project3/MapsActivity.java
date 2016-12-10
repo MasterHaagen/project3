@@ -4,11 +4,17 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
+import android.database.Cursor;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -19,6 +25,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -27,10 +34,22 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+    private static final String ITEM_DATE = "Item Date";
+    private static final String ITEM_LOCATION = "Item Location";
+    private static final String ITEM_ICON = "Item Icon";
 
     private GoogleMap mMap;
 
@@ -46,6 +65,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // 顯示目前與儲存位置的標記物件
     private Marker currentMarker, itemMarker;
 
+    boolean move = true;
+
+    private MyDB db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +78,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        db = new MyDB(getApplicationContext());
+
+
 
         // 建立Google API用戶端物件
         configGoogleApiClient();
@@ -112,9 +139,10 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     // LocationListener
     @Override
     public void onLocationChanged(Location location) {
+        Log.d("LocationLOG", "Update location - " + location.getLatitude() + ", " + location.getLongitude() + "]");
         // 位置改變
         // Location參數是目前的位置
-        currentLocation = location;
+        //currentLocation = location;
         LatLng latLng = new LatLng(
                 location.getLatitude(), location.getLongitude());
 
@@ -127,7 +155,13 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         // 移動地圖到目前的位置
-        moveMap(latLng);
+
+        if(move){
+            moveMap(latLng);
+            move = false;
+        }
+
+        draw(location);
     }
 
     // 建立Google API用戶端物件
@@ -191,12 +225,18 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         // 建立位置的座標物件
-        LatLng place = new LatLng(25.033408, 121.564099);
+        //LatLng place = new LatLng(25.033408, 121.564099);
+        LatLng place2 = new LatLng(22.748849, 121.147131);
+        addMarker(place2,"Title", "Data");
+        //getDB();
         // 移動地圖
-        moveMap(place);
+        //moveMap(place);
 
         // 加入地圖標記
         //addMarker(place, "Hello!", " Google Maps v2!");
+
+        processController();
+        //draw();
     }
 
     // 移動地圖到參數指定的位置
@@ -220,8 +260,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(place)
                 .title(title)
-                .snippet(context)
-                .icon(icon);
+                .snippet(context);
+                //.icon(icon);
 
         // 加入並設定記事儲存的位置標記
         itemMarker = mMap.addMarker(markerOptions);
@@ -281,32 +321,85 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public boolean onMarkerClick(Marker marker) {
                 // 如果是目前位置標記
-                if (marker.equals(currentMarker)) {
-                    AlertDialog.Builder ab = new AlertDialog.Builder(MapsActivity.this);
-
-                    ab.setTitle(R.string.title_current_location)
-                            .setMessage(R.string.message_current_location)
-                            .setCancelable(true);
-
-                    ab.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent result = new Intent();
-                            result.putExtra("lat", currentLocation.getLatitude());
-                            result.putExtra("lng", currentLocation.getLongitude());
-                            setResult(Activity.RESULT_OK, result);
-                            finish();
-                        }
-                    });
-                    ab.setNegativeButton(android.R.string.cancel, null);
-
-                    ab.show();
-
-                    return true;
-                }
-
+//                if (marker.equals(currentMarker)) {
+//                    AlertDialog.Builder ab = new AlertDialog.Builder(MapsActivity.this);
+//
+//                    ab.setTitle(R.string.title_current_location)
+//                            .setMessage(R.string.message_current_location)
+//                            .setCancelable(true);
+//
+//                    ab.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            Intent result = new Intent();
+//                            result.putExtra("lat", currentLocation.getLatitude());
+//                            result.putExtra("lng", currentLocation.getLongitude());
+//                            setResult(Activity.RESULT_OK, result);
+//                            finish();
+//                        }
+//                    });
+//                    ab.setNegativeButton(android.R.string.cancel, null);
+//
+//                    ab.show();
+//
+//                    return true;
+//                }
+//
                 return false;
             }
         });
+    }
+
+//    private void getDB(){
+//        //定義 ListView 每個 Item 的資料
+//        List<Map<String, Object>> itemList = new ArrayList<Map<String, Object>>();
+//        TypedArray regionIconList = getResources().obtainTypedArray(R.array.region_icon_list);
+//        LatLng place2 = new LatLng(22.748849, 121.147131);
+//        //addMarker(place2,"Title", "Data");
+//
+//        Cursor c = db.getFall();
+//        int rows_num = c.getCount();
+//        if(rows_num != 0) {
+//            c.moveToFirst();			//將指標移至第一筆資料
+//            for(int i=0; i<rows_num; i++) {
+//                LatLng place = new LatLng(22.748849, 121.147131);
+////                int id = c.getInt(0);	//取得第0欄的資料，根據欄位type使用適當語法
+////                String name = c.getString(1);
+////                int value = c.getInt(2);
+//                Calendar cal = Calendar.getInstance();
+//                Date dt = new Date(c.getLong(1));
+//                cal.setTime(dt);
+//                SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss a");
+//                String str = df.format(cal.getTime());
+//
+//                Map<String, Object> item = new HashMap<String, Object>();
+////                item.put(ITEM_DATE, str);
+////                item.put(ITEM_LOCATION, c.getString(3));
+////                //item.put(ITEM_ICON, regionIconList.getResourceId(i, 0));
+////                item.put(ITEM_ICON, regionIconList.getResourceId(0, 0));
+////                itemList.add(item);
+//
+//                c.moveToNext();		//將指標移至下一筆資料
+//            }
+//        }
+//    }
+
+    private void draw(Location location){
+        // Instantiates a new Polyline object and adds points to define a rectangle
+        PolylineOptions rectOptions = new PolylineOptions()
+                .add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
+                .add(new LatLng(location.getLatitude(), location.getLongitude()))
+                .width(8)
+                .color(Color.RED);
+                //.geodesic(true);
+
+                //.add(new LatLng(location.getLatitude(), location.getLongitude()))
+                //.add(new LatLng(22.741132, 121.138855));
+
+        // Get back the mutable Polyline
+        Polyline polyline = mMap.addPolyline(rectOptions);
+        //polyline.setPoints();
+
+        currentLocation = location;
     }
 }

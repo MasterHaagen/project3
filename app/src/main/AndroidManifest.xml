@@ -8,6 +8,7 @@
          location permissions for the 'MyLocation' functionality.
     -->
 
+
     <!-- 打電話 -->
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <!-- 傳簡訊 -->
@@ -75,9 +76,12 @@
         <!-- 混合測試 -->
         <activity android:name=".mix" />
 
-        <!--卡路里-->
+        <!-- 卡路里 -->
         <activity
             android:name=".BarChart2Activity"
+            android:parentActivityName=".MainActivity" />
+
+        <activity android:name=".FallActivity"
             android:parentActivityName=".MainActivity" />
     </application>
 

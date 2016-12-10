@@ -1,5 +1,6 @@
 package com.nttu.csie.project3;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
@@ -9,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.SoundPool;
@@ -20,6 +22,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -34,6 +37,12 @@ import android.widget.Toast;
 import android.Manifest;
 
 import com.github.mikephil.charting.utils.Utils;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.fitness.data.Goal;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.Marker;
 
 import java.util.Calendar;
 import java.util.List;
@@ -44,7 +53,7 @@ import android.content.Context;
 import android.content.pm.ActivityInfo;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener,LocationListener {
 
     // 定位設備授權請求代碼
     private static final int REQUEST_FINE_LOCATION_PERMISSION = 102;
@@ -61,6 +70,9 @@ public class MainActivity extends AppCompatActivity
 
     MediaPlayer mediaPlayer01;
 
+    private GmsLocationUtil mGmsLocationUtil;
+    String sLocation = "0,0";
+
     //mix-------------------------------------------------------------------------------------------------
     //�^��-----------------------------------------------------------------------
     float Fmax;
@@ -76,7 +88,7 @@ public class MainActivity extends AppCompatActivity
 //    boolean check1 = false;
     boolean fall = false;
     int check_Time = -1;
-    String gcom;
+    String gcom="no";
     TextView textView1;
     TextView textView2;
     TextView textView3;
@@ -360,7 +372,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setTitle("行動照護");
+        setTitle(R.string.app_name);
 
         // initialize the utilities
         Utils.init(this);
@@ -415,6 +427,10 @@ public class MainActivity extends AppCompatActivity
 
         isStarted = false;
 
+        mGmsLocationUtil = new GmsLocationUtil(this);
+        mGmsLocationUtil.connect();
+        mGmsLocationUtil.startUpdateLocation(this);
+
 //        Date now = new Date();
 //        Calendar cal = Calendar.getInstance();
 //        cal.setTime(now);
@@ -449,8 +465,14 @@ public class MainActivity extends AppCompatActivity
     private void processFall() {
         img.setImageResource(R.drawable.fall);
         Calendar c = Calendar.getInstance();
-        db.insert2(c.getTimeInMillis(), gcom, 0);
+        db.insert2(c.getTimeInMillis(), gcom, sLocation);
 
+        //音效
+        mediaPlayer01 = MediaPlayer.create(MainActivity.this, R.raw.alert);
+        mediaPlayer01.setLooping(true);
+        mediaPlayer01.start();
+
+        //警告視窗
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle("確認")
                 .setIcon(R.mipmap.ic_launcher)
@@ -459,16 +481,28 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         img.setImageResource(R.drawable.light);
+                        alert = false;
+                        mediaPlayer01.stop();
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //finish();
-                        img.setImageResource(R.drawable.light);
                     }
                 })
                 .show();
+        //簡訊
+        if(alert){
+            SmsManager smsManager = SmsManager.getDefault();
+            String to = "5555";
+            String content = "SMS test";
+            try {
+                smsManager.sendTextMessage(to.toString(), null, content.toString(), PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(), 0), null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         //想暫停的時候
 //        try {
 //            Thread.sleep(3000);
@@ -508,10 +542,22 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void onClick_Btn4(View view) {
-//
+        Intent intent = new Intent();
+        intent.setClass(MainActivity.this,FallActivity.class);
+        startActivity(intent);
+    }
+
+    public void onClick_Btn5(View view) {
+        img.setImageResource(R.drawable.fall);
+        Calendar c = Calendar.getInstance();
+        db.insert2(c.getTimeInMillis(), gcom, sLocation);
+
+        //音效
         mediaPlayer01 = MediaPlayer.create(MainActivity.this, R.raw.alert);
+        mediaPlayer01.setLooping(true);
         mediaPlayer01.start();
 
+        //警告視窗
         new AlertDialog.Builder(MainActivity.this)
                 .setTitle("確認")
                 .setIcon(R.mipmap.ic_launcher)
@@ -520,22 +566,21 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         img.setImageResource(R.drawable.light);
-                        alert = false;
+                        //alert = false;
                         mediaPlayer01.stop();
                     }
                 })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //finish();
-                    }
-                })
+//                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        //finish();
+//                    }
+//                })
                 .show();
-
-        if(alert == true && nowTime>check_Time+25){
+        if(alert){
             SmsManager smsManager = SmsManager.getDefault();
             String to = "5555";
-            String content = "SMS test";
+            String content = "2016/12/10 11:04 跌倒偵測警告";
             try {
                 smsManager.sendTextMessage(to.toString(), null, content.toString(), PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(), 0), null);
             } catch (Exception e) {
@@ -543,7 +588,18 @@ public class MainActivity extends AppCompatActivity
             }
         }
 
-        alert = true;
+//        //簡訊
+//        if(alert){
+//            SmsManager smsManager = SmsManager.getDefault();
+//            String to = "5555";
+//            String content = "SMS test";
+//            try {
+//                smsManager.sendTextMessage(to.toString(), null, content.toString(), PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(), 0), null);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+
         //String phone = "0909084003";
         //Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
         //startActivity(intent);
@@ -552,10 +608,14 @@ public class MainActivity extends AppCompatActivity
 //        startActivity(intent);
     }
 
-    public void onClick_Btn5(View view) {
-        Intent intent = new Intent();
-        intent.setClass(MainActivity.this,mix.class);
-        startActivity(intent);
+    //接收子模塊數據
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            switch (requestCode) {
+
+            }
+        }
     }
 
     public void delay(int ms){
@@ -565,6 +625,12 @@ public class MainActivity extends AppCompatActivity
         catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        //Log.d("TAG", "Update location - " + location.getLatitude() + ", " + location.getLongitude() + "]");
+        sLocation = location.getLatitude() + ", " + location.getLongitude();
     }
 
     // 讀取與處理定位設備授權請求
@@ -606,9 +672,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions,
-                                           int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         // 如果是定位設備授權請求
         if (requestCode == REQUEST_FINE_LOCATION_PERMISSION) {
             // 如果在授權請求選擇「允許」

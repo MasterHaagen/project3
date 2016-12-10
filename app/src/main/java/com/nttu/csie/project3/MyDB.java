@@ -87,7 +87,7 @@ public class MyDB {
     }
 
     //跌倒資料Insert
-    public void insert2(long time, String type,int location) {
+    public void insert2(long time, String type,String location) {
         //建立準備新增資料的ContentValues物件
         ContentValues cv = new ContentValues();
 
@@ -141,7 +141,7 @@ public class MyDB {
 //
 //    }
 
-        // 歷史資料圖表GET
+    // 歷史資料圖表GET
     public Cursor get(long startTime) {
         long endTime = startTime + 2 * 3600 * 1000 - 1;
         // 準備回傳結果用的物件
@@ -169,18 +169,18 @@ public class MyDB {
         return result;
     }
 
-    // 把Cursor目前的資料包裝為物件
-//    public Item getRecord(Cursor cursor) {
-//        // 準備回傳結果用的物件
-//        Item result = new Item();
-//
-//        result.setId(cursor.getInt(0));
-//        result.setDatetime(cursor.getLong(1));
-//        result.setSteps(cursor.getInt(2));
-//
-//        // 回傳結果
-//        return result;
-//    }
+    //取得跌倒記錄GET
+    public Cursor getFall() {
+        String where = "";
+
+        //db.query(String table, String[] columns, String selection, String[] selectionArgs, String groupBy, String having, String orderBy,String limit);
+        Cursor result = db.query(
+                TABLE_NAME_3,  new String[]{"*"}, where, null, null, null, START_TIME+" DESC", null);
+
+        result.moveToFirst();
+
+        return result;
+    }
 
     // 取得資料數量
     public int getCount() {
