@@ -226,8 +226,8 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // 建立位置的座標物件
         //LatLng place = new LatLng(25.033408, 121.564099);
-        LatLng place2 = new LatLng(22.748849, 121.147131);
-        addMarker(place2,"Title", "Data");
+        //LatLng place2 = new LatLng(22.748849, 121.147131);
+        //addMarker(place2,"Title", "Data");
         //getDB();
         // 移動地圖
         //moveMap(place);
@@ -386,20 +386,23 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void draw(Location location){
         // Instantiates a new Polyline object and adds points to define a rectangle
-        PolylineOptions rectOptions = new PolylineOptions()
-                .add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
-                .add(new LatLng(location.getLatitude(), location.getLongitude()))
-                .width(8)
-                .color(Color.RED);
-                //.geodesic(true);
+        if(currentLocation != null) {
+            PolylineOptions rectOptions = new PolylineOptions()
+                    .add(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
+                    .add(new LatLng(location.getLatitude(), location.getLongitude()))
+                    .width(8)
+                    .color(Color.RED);
+            //.geodesic(true);
 
-                //.add(new LatLng(location.getLatitude(), location.getLongitude()))
-                //.add(new LatLng(22.741132, 121.138855));
+            //.add(new LatLng(location.getLatitude(), location.getLongitude()))
+            //.add(new LatLng(22.741132, 121.138855));
 
-        // Get back the mutable Polyline
-        Polyline polyline = mMap.addPolyline(rectOptions);
-        //polyline.setPoints();
+            // Get back the mutable Polyline
+            Polyline polyline = mMap.addPolyline(rectOptions);
+            //polyline.setPoints();
 
+            //currentLocation = location;
+        }
         currentLocation = location;
     }
 }

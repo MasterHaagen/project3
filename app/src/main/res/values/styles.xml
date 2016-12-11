@@ -56,4 +56,24 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="BarChartActivity_ActionBar" parent="@style/AppTheme">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimary</item>
+    </style>
+
+    <style name="BarChart2Activity_ActionBar" parent="@style/AppTheme">
+        <item name="colorPrimary">@color/chart_color_KR</item>
+        <item name="colorPrimaryDark">@color/chart_color_KR</item>
+    </style>
+
+    <style name="MapsActivity_ActionBar" parent="@style/AppTheme">
+        <item name="colorPrimary">@android:color/holo_green_dark</item>
+        <item name="colorPrimaryDark">@android:color/holo_green_dark</item>
+    </style>
+
+    <style name="FallActivity_ActionBar" parent="@style/AppTheme">
+        <item name="colorPrimary">?attr/colorAccent</item>
+        <item name="colorPrimaryDark">@color/colorAccent</item>
+    </style>
+
 </resources>

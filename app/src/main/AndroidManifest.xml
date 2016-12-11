@@ -54,6 +54,7 @@
         <activity
             android:name=".BarChartActivity"
             android:label="BarChartActivity"
+            android:theme="@style/BarChartActivity_ActionBar"
             android:parentActivityName=".MainActivity" />
         <!-- 松霖 -->
         <activity
@@ -68,6 +69,7 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"
+            android:theme="@style/MapsActivity_ActionBar"
             android:parentActivityName=".MainActivity" />
         <!-- 測試JAVA -->
         <activity
@@ -79,10 +81,23 @@
         <!-- 卡路里 -->
         <activity
             android:name=".BarChart2Activity"
+            android:theme="@style/BarChart2Activity_ActionBar"
+            android:parentActivityName=".MainActivity" />
+        <!--跌倒紀錄-->
+        <activity
+            android:name=".FallActivity"
+            android:theme="@style/FallActivity_ActionBar"
             android:parentActivityName=".MainActivity" />
 
-        <activity android:name=".FallActivity"
-            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".Setting"
+            android:parentActivityName=".MainActivity">
+            <intent-filter>
+                <action android:name="com.nttu.csie.project3.CHOOSE_COLOR"/>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

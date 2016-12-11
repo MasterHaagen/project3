@@ -45,6 +45,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_FINE_LOCATION_PERMISSION = 102;
     private Toolbar toolbar;
     private ImageView img;
+    private TextView textView;
     //懸浮按鈕
     private FloatingActionButton fab;
     //左側選單
@@ -101,30 +103,70 @@ public class MainActivity extends AppCompatActivity
     int nowTime = 0;
     int sensorTime = 0;
     //step--------------------------------------------------------------
-    float dx = 0.0f;
-    float dy = 0.0f;
-    boolean up = false;
-    boolean down = false;
-    float max = 0;
-    float min = 0;
-    float[] fx = {100};
-    //float[] fy = {100};
-    int totalStep = 0;
-    int effectiveStep = 0;
-    //    boolean isStart = false;
-    int sensorCount = 0;
-    float tempMax = -99;
-    float tempMin = 99;
-    boolean walking = false;
-    boolean changed = false;
-    float gateValue = 0;
-    float[] gvAverage = new float[10];
-    int gvCount = 0;
-    float buttonTime = -1;
-    float buttonTime2 = -1;
-    float tempButtonTime = 0;
-    float top = 0;
-    float button = 0;
+    float[] x = new float[1000];
+	float[] fx = new float[1000];
+	boolean xup=false;
+	boolean xdown=false;
+	float xmax = 0;
+	float xmin = 0;
+	float xTempMax = -99;
+	float xTempMin = 99;
+	boolean xChanged = false;
+	boolean xToped = false;
+	float xGateValue = 0;
+	float[] xGvAverage = new float[10];
+	int xGvCount = 0;
+	float xBottomTime = -1;
+	float xBottomTime2 = -1;
+	float xTempButtonTime = 0;
+	float xTop = 99;//
+	float xBottom = 99;//
+	//Y----------------------------------------
+	float[] y = new float[1000];
+	float[] fy = new float[1000];
+	boolean yup=false;
+	boolean ydown=false;
+	float ymax = 0;
+	float ymin = 0;
+	float yTempMax = -99;
+	float yTempMin = 99;
+	boolean yChanged = false;
+	boolean yToped = false;
+	float yGateValue = 0;
+	float[] yGvAverage = new float[10];
+	int yGvCount = 0;
+	float yBottomTime = -1;
+	float yBottomTime2 = -1;
+	float yTempButtonTime = 0;
+	float yTop = 99;//
+	float yBottom = 99;//
+	//common----------------
+	int totalStep = 0;
+	int effectiveStep = 0;
+	boolean isStart = false;
+	int timeNow = 0;
+	int sensorCount = 0;
+	String strx = "";
+	String stry = "";
+	String strz = "";
+	String X = "";
+	String GV = "";
+
+	//new----------------------------------------------------------
+	float gvxmax = 0;
+	float gvxmin = 0;
+	float[] xmaxAverage = new float[10];
+	float[] xminAverage = new float[10];
+	float gvymax = 0;
+	float gvymin = 0;
+	float[] ymaxAverage = new float[10];
+	float[] yminAverage = new float[10];
+	boolean xOneStep = false;
+	boolean yOneStep = false;
+	int endTime = -1000;
+	int walkingTimeCount = 0;
+	int startTime;
+
     private SensorManager smgr;
     private Sensor mAccelerometer;
     private List<Sensor> slist;
@@ -140,7 +182,7 @@ public class MainActivity extends AppCompatActivity
                 if (isStarted == false) return;
                 if (nowTime == sensorTime) return;
                 sensorTime = nowTime;
-                if (sensorCount < 99)
+                if (sensorCount < 999)
                     sensorCount++;
                 else
                     sensorCount = 0;
@@ -162,7 +204,8 @@ public class MainActivity extends AppCompatActivity
                         Fmax = totalForce;
                     }
 
-                    if (totalForce > 2) {
+                    //fmax值
+                    if (totalForce > 1.5) {
 
                         //if(!gcom.equals("NO"))
                         move = true;
@@ -182,7 +225,7 @@ public class MainActivity extends AppCompatActivity
 
                 }
                 if (move) {
-                    if (sensorCount > check_Time + 1) {//0.2��X��
+                    if (sensorCount > check_Time + 1) {//0.2嚙踝蕭X嚙踝蕭
                         if (Math.abs(degree) <= 0.6) {
                             gcom = YZcompare();
                             if (gcom != "NO") fall = true;
@@ -203,122 +246,52 @@ public class MainActivity extends AppCompatActivity
                 }
                 if (fall) return;
                 //step------------------------------------------------------------------------------------------------------------------
-                if (sensorCount < 5) return;//�ݭn4���H�W��Ƥ~�i���B�z
-                fx[sensorCount] = filter(arrayX[sensorCount], arrayX[sensorCount - 1], arrayX[sensorCount - 2], arrayX[sensorCount - 3]);
-                if (sensorCount < 6) return; //2���H�W�B�z�L����Ƥ~�i�����
-                dx = fx[sensorCount] - fx[sensorCount - 1];
-                up_and_down(dx);
-                if (nowTime % 10 == 0) {//�C���s
-                    max = tempMax;
-                    min = tempMin;
-                    tempMax = -99;
-                    tempMin = 99;
-                    changed = true;
-                }
-                if (max - min > 1) {//���T���j�~�⨫��
-                    if (changed) {//�C����@���֭�
-                        //int icount = 0;
-                        gateValue = (max + min) / 2;
-                        //�����֭�-------------------------
-							/*gvAverage[gvCount] = gateValue;
-							gateValue = 0;
-							for(int i = 0; i<10; i++){
-								if (gvAverage[i] != 0)
-									gateValue += gvAverage[i];
-								else {
-									icount = (i+1);
-									break;
-								}
-							}
-							gateValue  = gateValue / icount;
-							if(gvCount < 9)
-								gvCount++;
-							else
-								gvCount = 0;*/
-                        //----------------------------------
-                        //timeCount = timeNow;
-                        changed = false;
-                    }
-                    if (top > gateValue - 0.5) {
-                        if (button < (gateValue - 0.5) && button != -1) {
-                            if (buttonTime == -1)
-                                buttonTime = tempButtonTime;
-                            else
-                                buttonTime2 = tempButtonTime;
-                            button = -1;
-                        }
-                    }
-                    if (buttonTime2 != -1) {
-
-                        if (buttonTime2 - buttonTime >= 2 && buttonTime2 - buttonTime <= 20) {
-                            effectiveStep++;
-                            //textView3.setText("step= "+effectiveStep);
-                            buttonTime = buttonTime2;
-                            //�s�򦳮ĨB��----------------
-								/*if (effectiveStep > 5){
-									if (walking){
-										totalStep++;
-									} else {
-										walking = true;
-										totalStep += effectiveStep;
-									}
-								}*/
-                            //------------------------
-                        } else if (buttonTime2 - buttonTime < 2) {
-                            //walking = false;
-                            //effectiveStep = 0;
-                            gvAverage = new float[10];
-                            gvCount = 0;
-
-                        } else if (buttonTime2 - buttonTime > 20) {
-                            gvAverage = new float[10];
-                            gvCount = 0;
-                            buttonTime = -1;
-                        } else {
-                            gvAverage = new float[10];
-                            gvCount = 0;
-                            buttonTime = -1;
-                        }
-                        buttonTime2 = -1;
-                    }
-
-
-                } /*else {
-						effectiveStep = 0;
-						buttonTime = 0;
-						buttonTime2 = 0;
-						walking = false;
-						gvAverage = new float[10];
-						gvCount = 0;
-						X="";
-						GV="";
-					}*/
-                //textViewX.setText("Step: "+totalStep);
-
+                if(sensorCount >= 4){//需要4筆以上資料才可做處理
+        			fx[sensorCount] = filter(x[sensorCount], x[sensorCount-1], x[sensorCount-2], x[sensorCount-3]);
+        			fy[sensorCount] = filter(y[sensorCount], y[sensorCount-1], y[sensorCount-2], y[sensorCount-3]);
+        			if(sensorCount >= 5){
+        				if(XStepCounter() || YStepCounter()){
+        					totalStep++;
+        					endTime = timeNow;
+        					if(endTime==-1000){
+        						startTime = endTime;
+        						Date starttime=new Date();
+        					}
+        				}
+        			}else;
+        		}else;
             }
         }
 
-        //��T�ק��ܷ|�I�s
+        //嚙踝蕭T嚙論改蕭嚙豌會嚙瘢嚙編
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) {
         }
     };
     private List<Sensor> lightSensor;
     private Handler mHandlerTime = new Handler();
-    private final Runnable timerRun = new Runnable() {
-        public void run() {
-            mHandlerTime.postDelayed(this, 200);
-
-            nowTime++; // �g�L����� + 1
-            if (nowTime >= 6000) {
-                nowTime = 0;
-                sensorTime = 0;
-                check_Time = -1;
-                buttonTime = -1;
-                buttonTime2 = -1;
-            }
-        }
-    };
+    private final Runnable timerRun = new Runnable(){
+	    public void run(){
+		  mHandlerTime.postDelayed(this, 100);
+		  if(timeNow < 2000000000){
+			  nowTime++;
+		  } else{
+			nowTime = 0;
+			xBottomTime = -1;
+			xBottomTime2 = -1;
+			yBottomTime = -1;
+			yBottomTime2 = -1;
+			endTime = -1000;
+		  }
+		  if(nowTime - endTime < 100){
+			  walkingTimeCount++;
+		  }else{
+			  Date finishtime=new Date();
+			  endTime = -1000;
+			  totalStep=0;
+		  }
+		}
+	};
     View.OnClickListener start_1 = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -339,28 +312,64 @@ public class MainActivity extends AppCompatActivity
                 nowTime = 0;
                 sensorTime = 0;
                 //step--------------------------
-                dx = 0.0f;
-                dy = 0.0f;
-                up = false;
-                down = false;
-                max = 0;
-                min = 0;
-                fx = new float[100];
-                //fy = new float[100];
-                totalStep = 0;
-                effectiveStep = 0;
-                sensorCount = 0;
-                tempMax = -99;
-                tempMin = 99;
-                walking = false;
-                gateValue = 0;
-                gvAverage = new float[10];
-                gvCount = 0;
-                buttonTime = -1;
-                buttonTime2 = -1;
-                smgr.registerListener(mListener, mAccelerometer, SensorManager.SENSOR_DELAY_UI);
-                timerRun.run();
-                smgr.registerListener(mListener, lightSensor.get(0), SensorManager.SENSOR_DELAY_UI);
+                smgr.registerListener(mListener, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        		x = new float[1000];
+        		xup = false;
+        		xdown = false;
+        		xmax = 0;
+        		xmin = 0;
+        		fx = new float[1000];
+        		xTempMax = -99;
+        		xTempMin = 99;
+        		xGateValue = 0;
+        		xGvAverage = new float[10];
+        		xGvCount = 0;
+        		xBottomTime = -1;
+        		xBottomTime2 = -1;
+        		strx = "";
+        		stry = "";
+        		strz = "";
+        		isStart = true;
+        		//Y-------------------------------
+        		y = new float[1000];
+        		fy = new float[1000];
+        		yup = false;
+        		ydown = false;
+        		ymax = 0;
+        		ymin = 0;
+        		yTempMax = -99;
+        		yTempMin = 99;
+        		yChanged = false;
+        		yToped = false;
+        		yGateValue = 0;
+        		yGvAverage = new float[10];
+        		yGvCount = 0;
+        		yBottomTime = -1;
+        		yBottomTime2 = -1;
+        		yTempButtonTime = 0;
+        		yTop = 99;//
+        		yBottom = 99;//
+        		//common---------------------------
+        		totalStep = 0;
+        		effectiveStep = 0;
+        		timeNow = 0;
+        		sensorCount = 0;
+        		endTime = -1000;
+        		walkingTimeCount = 0;
+        		//new----------------------------
+        		xmaxAverage = new float[10];
+        		xminAverage = new float[10];
+        		gvymax = 0;
+        		gvymin = 0;
+        		ymaxAverage = new float[10];
+        		yminAverage = new float[10];
+        		xOneStep = false;
+        		yOneStep = false;
+        		xTop = 99;
+        		xBottom = 99;
+        		gvxmax = 0;
+        		gvxmin = 0;
+        		timerRun.run();
             }
         }
     };
@@ -460,6 +469,8 @@ public class MainActivity extends AppCompatActivity
         textView2 = (TextView) findViewById(R.id.tv2);
         textView3 = (TextView) findViewById(R.id.tv3);
         textView4 = (TextView) findViewById(R.id.tv4);
+        //textView = (TextView) findViewById(R.id.user);
+        //textView.setText("測試用戶");
     }
 
     private void processFall() {
@@ -481,46 +492,46 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         img.setImageResource(R.drawable.light);
-                        alert = false;
+                        //alert = false;
                         mediaPlayer01.stop();
                     }
                 })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //finish();
-                    }
-                })
+//                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        //finish();
+//                    }
+//                })
                 .show();
-        //簡訊
         if(alert){
             SmsManager smsManager = SmsManager.getDefault();
             String to = "5555";
-            String content = "SMS test";
+            String content = "2016/12/10 11:04 跌倒偵測警告";
             try {
                 smsManager.sendTextMessage(to.toString(), null, content.toString(), PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(), 0), null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        //想暫停的時候
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
+
+//        //簡訊
+//        if(alert){
+//            SmsManager smsManager = SmsManager.getDefault();
+//            String to = "5555";
+//            String content = "SMS test";
+//            try {
+//                smsManager.sendTextMessage(to.toString(), null, content.toString(), PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(), 0), null);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
 //        }
-//        SmsManager smsManager = SmsManager.getDefault();
-//        String to = "5554";
-//        String content = "SMS test";
-//        try{
-//            smsManager.sendTextMessage(to.toString(), null, content.toString(), PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(), 0), null);
-//        }
-//        catch(Exception e){
-//            e.printStackTrace();
-//        }
+
         //String phone = "0909084003";
         //Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
         //startActivity(intent);
+//        Intent intent = new Intent();
+//        intent.setClass(MainActivity.this,test3.class);
+//        startActivity(intent);
     }
 
     //Onclick調用
@@ -729,10 +740,8 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.history) {
-            Intent intent = new Intent();
-            intent.setClass(MainActivity.this,BarChartActivity.class);
-            startActivity(intent);
+        if (id == R.id.nav_manage) {
+            startActivity(new Intent(this,Setting.class));
             //finish();
         }
 //        else if (id == R.id.icon_fall) {
@@ -763,36 +772,255 @@ public class MainActivity extends AppCompatActivity
     }
 
     //mix-----------------------------------------------------------------------------------------
-    void up_and_down(float delta){
-        if(delta>=0){
-            up=true;
-            getpoint(true);
-        }
-        else{
-            down=true;
-            getpoint(false);
-        }
-    }
+    void Xup_and_down(float a, float b){
+		float delta = a - b;
+		if(delta>=0){
+			xup=true;
+			Xgetpoint(true, b);
+		}
+		else{
+			xdown=true;
+			Xgetpoint(false, b);
+		}
+	}
+    void Yup_and_down(float a, float b){
+		float delta = a - b;
+		if(delta>=0){
+			yup=true;
+			Ygetpoint(true, b);
+		}
+		else{
+			ydown=true;
+			Ygetpoint(false, b);
+		}
+	}
 
-    void getpoint(boolean status){
-        if(status){
-            if(down){
-                down=false;
-                button = fx[sensorCount-1];
-                tempButtonTime = nowTime;
-                if(fx[sensorCount-1] < tempMin)
-                    tempMin = fx[sensorCount-1];
-            }
-        }
-        else {
-            if(up){
-                up=false;
-                top = fx[sensorCount-1];
-                if(fx[sensorCount-1] > tempMax)
-                    tempMax = fx[sensorCount-1];
-            }
-        }
-    }
+	public boolean XStepCounter(){
+		xOneStep = false;
+		Xup_and_down(x[sensorCount], x[sensorCount-1]);
+		if(xTop - xBottom > 1){
+			if(timeNow % 20 ==0){//每秒取一次最大最小值
+				xmax = xTempMax;
+				xmin = xTempMin;
+				xTempMax = -99;
+				xTempMin = 99;
+				xChanged = true;
+			}
+		}else{
+			xTempMax = -99;
+			xTempMin = 99;
+		}
+		if(xmax - xmin > 1){
+			if(xChanged){//每秒取一次閥值
+				int gvDiv = 0;
+				xGateValue = (xmax+xmin)/2;
+				xGvAverage[xGvCount] = xGateValue;
+				xmaxAverage[xGvCount] = xmax;
+				xminAverage[xGvCount] = xmin;
+				if(xGvCount < 2)
+					xGvCount++;
+				else
+					xGvCount = 0;
+				xGateValue = 0;
+				gvxmax = 0;
+				gvxmin = 0;
+				for(int i = 0; i<3; i++){
+					if (xGvAverage[i] != 0.0)
+						xGateValue += xGvAverage[i];
+					else {
+						gvDiv = i;
+						break;
+					}
+					if(i == 2) gvDiv = 3;
+				}
+				for(int i = 0; i<3; i++){
+					if (xmaxAverage[i] != 0.0)
+						gvxmax += xmaxAverage[i];
+					else
+						break;
+				}
+				for(int i = 0; i<3; i++){
+					if (xminAverage[i] != 0.0)
+						gvxmin += xminAverage[i];
+					else
+						break;
+				}
+				xGateValue  = xGateValue / gvDiv;
+				gvxmax  = gvxmax / gvDiv;
+				gvxmin  = gvxmin /gvDiv;
+				X += "t1+";
+				GV += xGateValue+"+";
+
+				//timeCount = timeNow;
+				xChanged = false;
+			}else;
+			if(xTop > xGateValue && xTop != 99)	{
+				xToped = true;
+				xTop = 99;
+			}
+			if(xToped){
+				if(xBottom < (2*xGateValue+gvxmin)/3 && xBottom != 99){
+					if(xBottomTime == -1)
+						xBottomTime = xTempButtonTime;
+					else
+						xBottomTime2 = xTempButtonTime;
+					xBottom = 99;
+					xToped = false;
+				}
+			}else;
+			if (xBottomTime2 != -1){
+
+				if (xBottomTime2 - xBottomTime >= 2 && xBottomTime2 - xBottomTime <= 20){
+					xOneStep = true;
+					xBottomTime = xBottomTime2;
+				} else if (xBottomTime2 - xBottomTime < 2) {
+					//walking = false;
+					//effectiveStep = 0;
+					X="";
+					GV="";
+
+				} else if (xBottomTime2 - xBottomTime > 20){
+					X="";
+					GV="";
+					xBottomTime = xBottomTime2;
+				} else {
+					X="";
+					GV="";
+					xBottomTime = xBottomTime2;
+				}
+
+	 			 xBottomTime2 = -1;
+			}else;
+		}else;
+		return xOneStep;
+	}
+
+	public boolean YStepCounter(){
+		yOneStep = false;
+		Yup_and_down(y[sensorCount], y[sensorCount-1]);
+		if(yTop - yBottom > 1){
+			if(timeNow % 20 ==0){//每秒取一次最大最小值
+				ymax = yTempMax;
+				ymin = yTempMin;
+				yTempMax = -99;
+				yTempMin = 99;
+				yChanged = true;
+			}
+		}else;
+		if(ymax - ymin > 1){
+			if(yChanged){//每秒取一次閥值
+				int gvDiv = 0;
+				yGateValue = (ymax+ymin)/2;
+				yGvAverage[yGvCount] = yGateValue;
+				ymaxAverage[yGvCount] = ymax;
+				yminAverage[yGvCount] = ymin;
+				if(yGvCount < 2)
+					yGvCount++;
+				else
+					yGvCount = 0;
+				yGateValue = 0;
+				gvymax = 0;
+				gvymin = 0;
+				for(int i = 0; i<3; i++){
+					if (yGvAverage[i] != 0.0)
+						yGateValue += yGvAverage[i];
+					else {
+						gvDiv = i;
+						break;
+					}
+					if(i == 2) gvDiv = 3;
+				}
+				for(int i = 0; i<3; i++){
+					if (ymaxAverage[i] != 0.0)
+						gvymax += ymaxAverage[i];
+					else
+						break;
+				}
+				for(int i = 0; i<3; i++){
+					if (yminAverage[i] != 0.0)
+						gvymin += yminAverage[i];
+					else
+						break;
+				}
+				yGateValue  = yGateValue / gvDiv;
+				gvymax  = gvymax / gvDiv;
+				gvymin  = gvymin /gvDiv;
+				yChanged = false;
+			}else;
+			if(yTop > yGateValue && yTop != 99)	{
+				yToped = true;
+				yTop = 99;
+			}
+			if(yToped){
+				if(yBottom < (2*yGateValue+gvymin)/3 && yBottom != 99){
+					if(yBottomTime == -1)
+						yBottomTime = yTempButtonTime;
+					else
+						yBottomTime2 = yTempButtonTime;
+					yBottom = 99;
+					yToped = false;
+				}
+			}else;
+			if (yBottomTime2 != -1){
+
+				if (yBottomTime2 - yBottomTime >= 2 && yBottomTime2 - yBottomTime <= 20){
+					yOneStep = true;
+					yBottomTime = yBottomTime2;
+				} else if (yBottomTime2 - yBottomTime < 2) {
+					//walking = false;
+					//effectiveStep = 0;
+				} else if (yBottomTime2 - yBottomTime > 20){
+					yBottomTime = yBottomTime2;
+				} else {
+					yBottomTime = yBottomTime2;
+				}
+
+	 			     yBottomTime2 = -1;
+			}else;
+		}else;
+		return yOneStep;
+	}
+
+
+    void Xgetpoint(boolean status, float b){
+		if(status){
+			if(xdown){
+				xdown=false;
+				xBottom =b;
+				xTempButtonTime = timeNow;
+				if(b < xTempMin)
+					xTempMin = b;
+			}
+		}
+		else {
+			if(xup){
+				xup=false;
+				xTop = b;
+				if(b > xTempMax)
+					xTempMax = b;
+			}
+		}
+	}
+
+    void Ygetpoint(boolean status, float b){
+		if(status){
+			if(ydown){
+				ydown=false;
+				yBottom =b;
+				yTempButtonTime = timeNow;
+				if(b < yTempMin)
+					yTempMin = b;
+			}
+		}
+		else {
+			if(yup){
+				yup=false;
+				yTop = b;
+				if(b > yTempMax)
+					yTempMax = b;
+			}
+		}
+	}
 
     float filter(float now, float last1, float last2, float last3){
         return (now+last1+last2+last3)/4;
@@ -826,7 +1054,8 @@ public class MainActivity extends AppCompatActivity
         return "out error";
     }
 
-    public char XZcompare(float xa, float b){//4.5
+
+	public char XZcompare(float xa, float b){//4.5
         if (arrayX[sensorCount - 10]>0){
             if(5.4 <= b) return 'P';
                 //else if(b<2.75)return 'M';

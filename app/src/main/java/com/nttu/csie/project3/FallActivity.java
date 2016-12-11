@@ -36,6 +36,8 @@ public class FallActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fall);
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        setTitle("跌倒記錄");
+
         //mTxtR = (TextView) findViewById(R.id.testview);
         db = new MyDB(getApplicationContext());
 

@@ -43,6 +43,7 @@ public class BarChartActivity extends AppCompatActivity {
         super.setContentView(R.layout.activity_bar_chart);
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        setTitle("步數");
         processViews();
 
         //日期處理

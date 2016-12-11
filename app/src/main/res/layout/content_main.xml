@@ -84,7 +84,7 @@
             android:layout_column="1">
 
             <Button
-                android:text="開發中"
+                android:text="PPAP"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:textSize="16dp"

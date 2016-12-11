@@ -41,6 +41,7 @@ public class BarChart2Activity extends AppCompatActivity {
         super.setContentView(R.layout.activity_bar_chart2);
         super.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        setTitle("卡路里");
         processViews();
 
         //日期處理

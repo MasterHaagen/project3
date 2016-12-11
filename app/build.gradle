@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         debug {
@@ -34,23 +35,25 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    //SmartTabLayout
+    //Optional: see how to use the utility.
+
+
     compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.android.support:design:25.0.1'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.5'
     compile 'com.wdullaer:materialdatetimepicker:2.5.0'
     compile 'com.google.android.gms:play-services:10.0.1'
-    testCompile 'junit:junit:4.12'
     compile 'com.github.manuelpeinado.fadingactionbar:fadingactionbar:3.1.2'
-    //SmartTabLayout
     compile 'com.ogaclejapan.smarttablayout:library:1.6.1@aar'
-    //Optional: see how to use the utility.
     compile 'com.ogaclejapan.smarttablayout:utils-v4:1.6.1@aar'
-    //Optional: see how to use the utility.
     compile 'com.ogaclejapan.smarttablayout:utils-v13:1.6.1@aar'
     compile 'com.github.ximencx.fadeactionbar:library:1.0.1'
-
     compile 'com.android.support:recyclerview-v7:25.0.1'
     compile 'cn.bingoogolapple:bga-adapter:1.1.5@aar'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'cn.bingoogolapple:bga-refreshlayout:1.1.6@aar'
+    compile 'com.android.support:support-v4:25.0.1'
+    compile 'com.android.support:support-vector-drawable:25.0.1'
+    testCompile 'junit:junit:4.12'
 }
