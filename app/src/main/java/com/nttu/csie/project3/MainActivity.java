@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -44,6 +45,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.Marker;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -60,13 +62,17 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_FINE_LOCATION_PERMISSION = 102;
     private Toolbar toolbar;
     private ImageView img;
-    private TextView textView;
+    private TextView username;
+    private TextView userphone;
+    private User user;
+    private SharedPreferences prefs;
     //懸浮按鈕
     private FloatingActionButton fab;
     //左側選單
     private DrawerLayout drawer;
     //側滑動作
     private NavigationView navigationView;
+    private View v;
     private MyDB db;
     static boolean  alert = true;
 
@@ -93,17 +99,15 @@ public class MainActivity extends AppCompatActivity
     String gcom="no";
     TextView textView1;
     TextView textView2;
-    TextView textView3;
+    TextView edit_test;
     TextView textView4;
     boolean isStarted;
     //    boolean mJustCall;
 //    boolean checkCall;
     boolean move = false;
     double degree;
-    int nowTime = 0;
     int sensorTime = 0;
     //step--------------------------------------------------------------
-    float[] x = new float[1000];
 	float[] fx = new float[1000];
 	boolean xup=false;
 	boolean xdown=false;
@@ -121,8 +125,9 @@ public class MainActivity extends AppCompatActivity
 	float xTempButtonTime = 0;
 	float xTop = 99;//
 	float xBottom = 99;//
+    Calendar start_time = Calendar.getInstance();
+    Calendar end_time = Calendar.getInstance();
 	//Y----------------------------------------
-	float[] y = new float[1000];
 	float[] fy = new float[1000];
 	boolean yup=false;
 	boolean ydown=false;
@@ -170,18 +175,19 @@ public class MainActivity extends AppCompatActivity
     private SensorManager smgr;
     private Sensor mAccelerometer;
     private List<Sensor> slist;
-    private float[] arrayX = new float[100];
-    private float[] arrayY = new float[100];
-    private float[] arrayZ = new float[100];
+    private float[] arrayX = new float[1000];
+    private float[] arrayY = new float[1000];
+    private float[] arrayZ = new float[1000];
     private final SensorEventListener mListener = new SensorEventListener() {
         @Override
         public void onSensorChanged(SensorEvent event) {
             // TODO Auto-generated method stub
             //if(check_Time != sensorCount){
+            //test.setText(user.username);
             if (event.sensor == slist.get(0)) {
                 if (isStarted == false) return;
-                if (nowTime == sensorTime) return;
-                sensorTime = nowTime;
+                if (timeNow == sensorTime) return;
+                sensorTime = timeNow;
                 if (sensorCount < 999)
                     sensorCount++;
                 else
@@ -223,9 +229,9 @@ public class MainActivity extends AppCompatActivity
 
                     }
 
-                }
+                }else;
                 if (move) {
-                    if (sensorCount > check_Time + 1) {//0.2嚙踝蕭X嚙踝蕭
+                    if (sensorCount > check_Time + 2) {//0.2嚙踝蕭X嚙踝蕭
                         if (Math.abs(degree) <= 0.6) {
                             gcom = YZcompare();
                             if (gcom != "NO") fall = true;
@@ -242,25 +248,32 @@ public class MainActivity extends AppCompatActivity
                             move = false;
                         }
                         //check_Time = -1;
-                    }
-                }
+                    }else;
+                }else;
                 if (fall) return;
                 //step------------------------------------------------------------------------------------------------------------------
-                if(sensorCount >= 4){//需要4筆以上資料才可做處理
-        			fx[sensorCount] = filter(x[sensorCount], x[sensorCount-1], x[sensorCount-2], x[sensorCount-3]);
-        			fy[sensorCount] = filter(y[sensorCount], y[sensorCount-1], y[sensorCount-2], y[sensorCount-3]);
+
+                if(sensorCount >= 4){//��閬�4蝑誑銝��������
+        			fx[sensorCount] = filter(arrayX[sensorCount], arrayX[sensorCount-1], arrayX[sensorCount-2], arrayX[sensorCount-3]);
+        			fy[sensorCount] = filter(arrayY[sensorCount], arrayY[sensorCount-1], arrayY[sensorCount-2], arrayY[sensorCount-3]);
         			if(sensorCount >= 5){
         				if(XStepCounter() || YStepCounter()){
-        					totalStep++;
+                            totalStep++;
+                            //Toast.makeText(getApplicationContext(), totalStep, Toast.LENGTH_SHORT).show();
+                            edit_test.setText(totalStep+"");
+
+                            //Log.d("testCOUNT", totalStep+"");
+                            if(endTime==-1000){
+                                startTime = timeNow;
+                                start_time = Calendar.getInstance();
+                            }else;
         					endTime = timeNow;
-        					if(endTime==-1000){
-        						startTime = endTime;
-        						Date starttime=new Date();
-        					}
+
         				}
         			}else;
         		}else;
             }
+
         }
 
         //嚙踝蕭T嚙論改蕭嚙豌會嚙瘢嚙編
@@ -274,22 +287,27 @@ public class MainActivity extends AppCompatActivity
 	    public void run(){
 		  mHandlerTime.postDelayed(this, 100);
 		  if(timeNow < 2000000000){
-			  nowTime++;
+              timeNow++;
 		  } else{
-			nowTime = 0;
+              timeNow = 0;
 			xBottomTime = -1;
 			xBottomTime2 = -1;
 			yBottomTime = -1;
 			yBottomTime2 = -1;
 			endTime = -1000;
 		  }
-		  if(nowTime - endTime < 100){
+		  if(timeNow - endTime < 100){
 			  walkingTimeCount++;
 		  }else{
-			  Date finishtime=new Date();
+			  end_time = Calendar.getInstance();
+              if(totalStep!=0){
+                  Item item = new Item(0,start_time.getTimeInMillis(),0,end_time.getTimeInMillis(),totalStep);
+                  db.insert(item);
+              }
 			  endTime = -1000;
 			  totalStep=0;
 		  }
+
 		}
 	};
     View.OnClickListener start_1 = new View.OnClickListener() {
@@ -306,14 +324,14 @@ public class MainActivity extends AppCompatActivity
                 check_Time = -1;
                 Fmax = (float) -10.0;
                 Force = (float) 0.0;
-                arrayX = new float[100];
-                arrayY = new float[100];
-                arrayZ = new float[100];
-                nowTime = 0;
+                arrayX = new float[1000];
+                arrayY = new float[1000];
+                arrayZ = new float[1000];
+                timeNow = 0;
                 sensorTime = 0;
+                fall = false;
                 //step--------------------------
                 smgr.registerListener(mListener, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        		x = new float[1000];
         		xup = false;
         		xdown = false;
         		xmax = 0;
@@ -331,7 +349,6 @@ public class MainActivity extends AppCompatActivity
         		strz = "";
         		isStart = true;
         		//Y-------------------------------
-        		y = new float[1000];
         		fy = new float[1000];
         		yup = false;
         		ydown = false;
@@ -459,18 +476,31 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        username.setText(prefs.getString("NAME", "使用者"));
+        userphone.setText("緊急聯絡人電話" + prefs.getString("PHONE", "0900000000"));
+    }
+
     private void processViews() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+        v = navigationView.getHeaderView(0);
         img = (ImageView) findViewById(R.id.imageView);
-        textView1 = (TextView) findViewById(R.id.tv1);
-        textView2 = (TextView) findViewById(R.id.tv2);
-        textView3 = (TextView) findViewById(R.id.tv3);
-        textView4 = (TextView) findViewById(R.id.tv4);
-        //textView = (TextView) findViewById(R.id.user);
-        //textView.setText("測試用戶");
+        //textView1 = (TextView) findViewById(R.id.tv1);
+        //textView2 = (TextView) findViewById(R.id.tv2);
+        edit_test = (TextView) findViewById(R.id.edit_test);
+        //textView4 = (TextView) findViewById(R.id.tv4);
+        username = (TextView) v.findViewById(R.id.user_name);
+        userphone = (TextView)v.findViewById(R.id.user_phone);
+
+        prefs = getSharedPreferences("DATA", MODE_PRIVATE);
+        username.setText(prefs.getString("NAME", "使用者"));
+        userphone.setText(prefs.getString("PHONE", "0900000000"));
+        //userphone = prefs.getString("PHONE", "0900000000");
     }
 
     private void processFall() {
@@ -504,9 +534,12 @@ public class MainActivity extends AppCompatActivity
 //                })
                 .show();
         if(alert){
+            SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss a");
+            String str = df.format(c.getTime());
+
             SmsManager smsManager = SmsManager.getDefault();
-            String to = "5555";
-            String content = "2016/12/10 11:04 跌倒偵測警告";
+            String to = userphone.getText().toString();
+            String content = str + " 跌倒偵測 \n" + sLocation;
             try {
                 smsManager.sendTextMessage(to.toString(), null, content.toString(), PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent(), 0), null);
             } catch (Exception e) {
@@ -617,6 +650,10 @@ public class MainActivity extends AppCompatActivity
 //        Intent intent = new Intent();
 //        intent.setClass(MainActivity.this,test3.class);
 //        startActivity(intent);
+    }
+
+    public void onClick_Btn6(View view){
+
     }
 
     //接收子模塊數據
@@ -797,7 +834,7 @@ public class MainActivity extends AppCompatActivity
 
 	public boolean XStepCounter(){
 		xOneStep = false;
-		Xup_and_down(x[sensorCount], x[sensorCount-1]);
+		Xup_and_down(arrayX[sensorCount], arrayX[sensorCount-1]);
 		if(xTop - xBottom > 1){
 			if(timeNow % 20 ==0){//每秒取一次最大最小值
 				xmax = xTempMax;
@@ -897,7 +934,7 @@ public class MainActivity extends AppCompatActivity
 
 	public boolean YStepCounter(){
 		yOneStep = false;
-		Yup_and_down(y[sensorCount], y[sensorCount-1]);
+		Yup_and_down(arrayY[sensorCount], arrayY[sensorCount-1]);
 		if(yTop - yBottom > 1){
 			if(timeNow % 20 ==0){//每秒取一次最大最小值
 				ymax = yTempMax;
@@ -1027,11 +1064,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     public String YZcompare(/*float cx,float cy,float cz*/){
-        if (Math.abs(arrayY[check_Time + 1]) < 4 && Math.abs(arrayZ[check_Time + 1]) < 4)//2.75
+        if (Math.abs(arrayY[check_Time + 2]) < 4 && Math.abs(arrayZ[check_Time + 2]) < 4)//2.75
             return "NO";
         else{
-            if(Math.abs(arrayY[check_Time + 1]) >= Math.abs(arrayZ[check_Time + 1])){
-                switch (XYcompare(arrayX[check_Time + 1], arrayY[check_Time + 1])){
+            if(Math.abs(arrayY[check_Time + 2]) >= Math.abs(arrayZ[check_Time + 2])){
+                switch (XYcompare(arrayX[sensorCount], arrayY[sensorCount])){
                     case 'P':
                         return "BW";
                     case 'M':
@@ -1041,7 +1078,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
             else{
-                switch (XZcompare(arrayX[sensorCount], arrayZ[sensorCount])){
+                switch (XZcompare(arrayX[check_Time + 2], arrayZ[check_Time + 2])){
                     case 'P':
                         return "RT";
                     case 'M':

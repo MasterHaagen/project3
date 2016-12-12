@@ -84,17 +84,17 @@
             android:layout_column="1">
 
             <Button
-                android:text="PPAP"
+                android:text="跌倒測試"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:textSize="16dp"
                 android:id="@+id/btn5"
                 android:onClick="onClick_Btn5"
                 android:backgroundTint="@android:color/holo_blue_bright"
-                android:visibility="visible"/>
+                android:visibility="invisible"/>
 
             <Button
-                android:text="開發中"
+                android:text="其他測試"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textSize="16dp"
@@ -125,6 +125,13 @@
         </TableRow>
 
     </TableLayout>
+
+    <TextView
+        android:text=""
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_test"
+        android:visibility="invisible" />
 
 
 </LinearLayout>

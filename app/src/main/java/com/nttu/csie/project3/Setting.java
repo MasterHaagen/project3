@@ -1,11 +1,14 @@
 package com.nttu.csie.project3;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -18,6 +21,7 @@ public class Setting extends PreferenceActivity{
     EditTextPreference editTextPreference_name;
     EditTextPreference editTextPreference_phone;
     Preference button;
+    User user = new User();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +54,8 @@ public class Setting extends PreferenceActivity{
                 editTextPreference_name.setSummary(newValue.toString());
                 editTextPreference_name.setDefaultValue(newValue);
                 editTextPreference_name.setText(newValue.toString());
+                user.username = newValue.toString();
+
                 return false;
             }
         });
@@ -66,6 +72,7 @@ public class Setting extends PreferenceActivity{
                 editTextPreference_phone.setSummary(newValue.toString());
                 editTextPreference_phone.setDefaultValue(newValue);
                 editTextPreference_phone.setText(newValue.toString());
+                user.username = newValue.toString();
                 return false;
             }
         });
@@ -76,6 +83,8 @@ public class Setting extends PreferenceActivity{
                 //code for what you want it to do
                 prefs.edit()
                         .clear()
+                        .putString(name,"Username")
+                        .putString(phone,"0900000000")
                         .commit();
                 editTextPreference_name.setSummary("Setting your username");
                 editTextPreference_name.setDefaultValue("Username");
@@ -88,4 +97,5 @@ public class Setting extends PreferenceActivity{
             }
         });
     }
+
 }

@@ -54,8 +54,8 @@
         <activity
             android:name=".BarChartActivity"
             android:label="BarChartActivity"
-            android:theme="@style/BarChartActivity_ActionBar"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/BarChartActivity_ActionBar" />
         <!-- 松霖 -->
         <activity
             android:name=".FallTest"
@@ -69,8 +69,8 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps"
-            android:theme="@style/MapsActivity_ActionBar"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/MapsActivity_ActionBar" />
         <!-- 測試JAVA -->
         <activity
             android:name=".test3"
@@ -81,23 +81,22 @@
         <!-- 卡路里 -->
         <activity
             android:name=".BarChart2Activity"
-            android:theme="@style/BarChart2Activity_ActionBar"
-            android:parentActivityName=".MainActivity" />
-        <!--跌倒紀錄-->
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/BarChart2Activity_ActionBar" />
+        <!-- 跌倒紀錄 -->
         <activity
             android:name=".FallActivity"
-            android:theme="@style/FallActivity_ActionBar"
-            android:parentActivityName=".MainActivity" />
-
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/FallActivity_ActionBar" />
         <activity
             android:name=".Setting"
             android:parentActivityName=".MainActivity">
             <intent-filter>
-                <action android:name="com.nttu.csie.project3.CHOOSE_COLOR"/>
+                <action android:name="com.nttu.csie.project3.CHOOSE_COLOR" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

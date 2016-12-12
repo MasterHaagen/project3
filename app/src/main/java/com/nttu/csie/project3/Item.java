@@ -5,6 +5,8 @@ import java.util.Locale;
 
 public class Item implements java.io.Serializable {
 
+    //user
+    private String user;
     // 編號
     private long id;
     //起始時間

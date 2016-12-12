@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.nttu.csie.project3.R.id.textView;
+//import static com.nttu.csie.project3.R.id.textView;
 
 public class FallActivity extends AppCompatActivity {
     private static final String ITEM_DATE = "Item Date";
